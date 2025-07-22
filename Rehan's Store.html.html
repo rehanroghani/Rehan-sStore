@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehan's Store - Premium Tech & More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .logo-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        
+        .admin-panel, .login-panel {
+            display: none;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            margin-top: 10px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .cart-panel.open {
+            right: 0;
+        }
+        
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .cart-overlay.open {
+            display: block;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5, #7e22ce);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .feature-icon {
+            background: linear-gradient(135deg, #93c5fd, #a5b4fc);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+        }
+        
+        .contact-icon {
+            background: linear-gradient(135deg, #93c5fd, #a5b4fc);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image-container {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+        }
+        
+        .product-image {
+            max-height: 80%;
+            max-width: 80%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+        
+        .category-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .price-tag {
+            position: relative;
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+        
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(90deg, #25D366, #128C7E);
+        }
+        
+        .call-btn {
+            background: linear-gradient(90deg, #4f46e5, #7e22ce);
+        }
+        
+        .footer-link {
+            transition: transform 0.2s ease;
+        }
+        
+        .footer-link:hover {
+            transform: translateX(5px);
+        }
+        
+        .social-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+        
+        @media (max-width: 640px) {
+            .cart-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Notification -->
+    <div id="notification" class="notification bg-green-500">
+        Product added to cart!
+    </div>
+
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="cart-overlay"></div>
+
+    <!-- Cart Panel -->
+    <div id="cartPanel" class="cart-panel">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Your Cart</h2>
+                <button id="closeCart" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="space-y-4">
+                <!-- Cart items will be added here -->
+                <div class="text-gray-500 text-center py-8">Your cart is empty</div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <div class="flex justify-between mb-4">
+                    <span class="font-semibold">Subtotal:</span>
+                    <span id="cartSubtotal" class="font-bold">$0.00</span>
+                </div>
+                <button id="checkoutBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition">
+                    Proceed to Checkout
+                </button>
+                <button id="clearCartBtn" class="w-full mt-2 bg-gray-200 text-gray-700 py-2 rounded-lg font-semibold hover:bg-gray-300 transition">
+                    Clear Cart
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Panel -->
+    <div id="loginPanel" class="login-panel fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg w-full max-w-md p-8 shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold logo-text">Admin Access</h2>
+                <button id="closeLoginBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label class="block text-gray-700 mb-2 font-medium">Password</label>
+                    <input type="password" id="adminPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition">
+                    Login as Admin
+                </button>
+                
+                <p id="loginError" class="text-red-500 text-center hidden">Incorrect password. Please try again.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl mr-3 shadow-lg">R</div>
+                        <span class="text-2xl logo-text">Rehan's Store</span>
+                    </a>
+                    <nav class="hidden md:flex ml-12 space-x-8">
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
+                        <a href="#products" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Products</a>
+                        <a href="#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
+                        <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="relative">
+                        <button id="cartBtn" class="text-gray-600 hover:text-indigo-600 transition-colors">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                            <span id="cartCount" class="cart-badge">0</span>
+                        </button>
+                    </div>
+                    <button id="adminBtn" class="hidden md:flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </button>
+                    <button id="mobileMenuBtn" class="md:hidden text-gray-600 hover:text-indigo-600 transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="md:hidden mt-4 pb-4 hidden">
+                <nav class="flex flex-col space-y-4">
+                    <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium py-2 transition-colors">Home</a>
+                    <a href="#products" class="text-gray-600 hover:text-indigo-600 font-medium py-2 transition-colors">Products</a>
+                    <a href="#contact" class="text-gray-600 hover:text-indigo-600 font-medium py-2 transition-colors">Contact</a>
+                    <a href="#about" class="text-gray-600 hover:text-indigo-600 font-medium py-2 transition-colors">About</a>
+                    <button id="mobileAdminBtn" class="flex items-center space-x-2 text-left text-gray-600 hover:text-indigo-600 font-medium py-2 transition-colors">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin Access</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20 relative">
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">Rehan's Store</span></h1>
+                    <p class="text-lg md:text-xl mb-8 text-gray-100 max-w-lg">Premium phones, laptops, and more at unbeatable prices. Exclusive deals and warranties on all products.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#products" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition shadow-lg">
+                            Shop Now
+                        </a>
+                        <a href="#contact" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition">
+                            Contact Us
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative">
+                        <div class="absolute -top-8 -left-8 w-32 h-32 bg-yellow-400 rounded-full opacity-30 blur-xl"></div>
+                        <div class="absolute -bottom-8 -right-8 w-40 h-40 bg-purple-500 rounded-full opacity-30 blur-xl"></div>
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='180' height='280' x='110' y='10' rx='10' fill='%23333' /%3E%3Crect width='160' height='260' x='120' y='20' rx='5' fill='%23fff' /%3E%3Ccircle cx='200' cy='260' r='10' fill='%23ddd' /%3E%3Crect width='40' height='5' x='180' y='30' rx='2' fill='%23333' /%3E%3Ccircle cx='160' cy='30' r='3' fill='%23333' /%3E%3C/svg%3E" alt="Latest Smartphone" class="relative z-10 w-full max-w-md">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold section-title">Why Choose Us</h2>
+                <p class="text-gray-600 mt-6 max-w-2xl mx-auto">We provide the best shopping experience with premium products and exceptional service</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex flex-col items-center p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                    <div class="feature-icon mb-6">
+                        <i class="fas fa-truck text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Free Shipping</h3>
+                    <p class="text-gray-600">Free delivery on all orders over $500. We deliver anywhere in Pakistan.</p>
+                </div>
+                <div class="flex flex-col items-center p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                    <div class="feature-icon mb-6">
+                        <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">2-Year Warranty</h3>
+                    <p class="text-gray-600">Extended warranty on all products with hassle-free replacement policy.</p>
+                </div>
+                <div class="flex flex-col items-center p-8 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition text-center">
+                    <div class="feature-icon mb-6">
+                        <i class="fas fa-headset text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">24/7 Support</h3>
+                    <p class="text-gray-600">Customer service available anytime via phone, WhatsApp or email.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold section-title">Our Products</h2>
+                <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Discover premium tech and more at Rehan's Store</p>
+            </div>
+            
+            <!-- Category Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="category-btn active px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow-md" data-category="all">
+                    All Products
+                </button>
+                <button class="category-btn px-6 py-3 rounded-full bg-white text-gray-700 font-medium shadow-md" data-category="phone">
+                    Phones
+                </button>
+                <button class="category-btn px-6 py-3 rounded-full bg-white text-gray-700 font-medium shadow-md" data-category="laptop">
+                    Laptops
+                </button>
+                <button class="category-btn px-6 py-3 rounded-full bg-white text-gray-700 font-medium shadow-md" data-category="other">
+                    Others
+                </button>
+            </div>
+            
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Products will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <div class="relative">
+                        <div class="absolute -top-6 -left-6 w-24 h-24 bg-indigo-200 rounded-full opacity-70"></div>
+                        <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-blue-200 rounded-full opacity-70"></div>
+                        <div class="relative z-10 bg-gradient-to-r from-blue-600 to-indigo-600 p-1 rounded-xl shadow-xl">
+                            <div class="bg-white p-8 rounded-lg">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-2xl mr-4 shadow-lg">R</div>
+                                    <h3 class="text-2xl font-bold logo-text">Rehan's Store</h3>
+                                </div>
+                                <p class="text-gray-600 mb-4">Established in 2020, Rehan's Store has become a trusted name in tech retail across Pakistan.</p>
+                                <p class="text-gray-600 mb-4">We specialize in premium phones, laptops, and other tech products, offering competitive prices and exceptional customer service.</p>
+                                <div class="flex items-center mt-6">
+                                    <div class="flex items-center mr-6">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        <span class="text-gray-700 font-medium">Authentic Products</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                        <span class="text-gray-700 font-medium">Best Prices</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold mb-6">About Rehan's Store</h2>
+                    <p class="text-gray-600 mb-4">Welcome to Rehan's Store, your premier destination for high-quality tech products and more in Pakistan. Based in Badwan Darbar, Dir Lower, we serve customers nationwide with the latest and greatest in technology.</p>
+                    <p class="text-gray-600 mb-4">Our mission is to provide our customers with premium products at competitive prices, backed by exceptional customer service and support.</p>
+                    <p class="text-gray-600 mb-6">Whether you're looking for the latest smartphone, a powerful laptop, or other items, we have you covered with a wide selection of products to meet your needs.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-indigo-600 mb-2">500+</div>
+                            <div class="text-gray-600">Products Sold</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-indigo-600 mb-2">300+</div>
+                            <div class="text-gray-600">Happy Customers</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-indigo-600 mb-2">3+</div>
+                            <div class="text-gray-600">Years Experience</div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl font-bold text-indigo-600 mb-2">24/7</div>
+                            <div class="text-gray-600">Customer Support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold section-title">Contact Us</h2>
+                <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Get in touch with us for any inquiries or support</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div class="space-y-8">
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-sm">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Phone Numbers</h3>
+                            <p class="text-gray-600 mb-1">+92 340 2699901</p>
+                            <p class="text-gray-600">+92 311 9666996</p>
+                            <div class="mt-4 flex space-x-3">
+                                <a href="tel:+923402699901" class="call-btn text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 shadow-md">
+                                    <i class="fas fa-phone"></i>
+                                    <span>Call Now</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-sm">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Email</h3>
+                            <p class="text-gray-600">rehanroghani2@gmail.com</p>
+                            <div class="mt-4">
+                                <a href="mailto:rehanroghani2@gmail.com" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 inline-block shadow-md">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Send Email</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-sm">
+                        <div class="contact-icon">
+                            <i class="fab fa-whatsapp text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">WhatsApp</h3>
+                            <p class="text-gray-600">+92 340 2699901</p>
+                            <div class="mt-4">
+                                <a href="https://wa.me/923402699901" target="_blank" class="whatsapp-btn text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 inline-block shadow-md">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <span>Chat on WhatsApp</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start bg-white p-6 rounded-xl shadow-sm">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold mb-2">Location</h3>
+                            <p class="text-gray-600">Badwan Darbar, Dir Lower, Malakaand, KPK, Pakistan</p>
+                            <div class="mt-4">
+                                <a href="https://maps.google.com/?q=Badwan+Darbar,+Dir+Lower,+Malakaand,+KPK,+Pakistan" target="_blank" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2 inline-block shadow-md">
+                                    <i class="fas fa-directions"></i>
+                                    <span>Get Directions</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-xl shadow-md">
+                    <h3 class="text-xl font-semibold mb-6">Send us a message</h3>
+                    <form class="space-y-5 contact-form">
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Your Name</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Your Email</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Phone Number</label>
+                            <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2 font-medium">Message</label>
+                            <textarea rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-4">Stay Updated</h2>
+                <p class="text-gray-100 mb-8">Subscribe to our newsletter for the latest product releases and exclusive deals.</p>
+                <form class="flex flex-col sm:flex-row gap-4">
+                    <input type="email" placeholder="Enter your email" class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-gray-800">
+                    <button type="submit" class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-600 transition shadow-md">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold logo-text">Rehan's Store Admin</h2>
+                <button id="closeAdminBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="mb-10">
+                <h3 class="text-xl font-semibold mb-6">Add New Product</h3>
+                <form id="addProductForm" class="space-y-5">
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Product Name</label>
+                        <input type="text" id="productName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Category</label>
+                        <select id="productCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                            <option value="phone">Phone</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Price ($)</label>
+                        <input type="number" id="productPrice" min="0" step="0.01" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Description</label>
+                        <textarea id="productDescription" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Specifications (comma separated)</label>
+                        <input type="text" id="productSpecs" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 8GB RAM, 256GB Storage, 48MP Camera">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-medium">Upload Image</label>
+                        <input type="file" id="productImage" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <img id="imagePreview" class="image-preview hidden mt-4 rounded-lg border border-gray-200">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition shadow-md">
+                        Add Product
+                    </button>
+                </form>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-semibold mb-6">Manage Products</h3>
+                <div id="productsList" class="space-y-4">
+                    <!-- Products will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div>
+                    <h3 class="text-xl font-semibold mb-6 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg mr-3">R</div>
+                        <span class="logo-text">Rehan's Store</span>
+                    </h3>
+                    <p class="text-gray-400 mb-6">Your one-stop shop for premium phones, laptops, and more at unbeatable prices.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-blue-600">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-blue-400">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-pink-600">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-icon w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:bg-red-600">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Home</a></li>
+                        <li><a href="#products" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Products</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> About Us</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Customer Service</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Returns & Refunds</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition footer-link flex items-center"><i class="fas fa-chevron-right mr-2 text-xs text-indigo-400"></i> Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-6">Contact Us</h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-indigo-400"></i>
+                            <span class="text-gray-400">Badwan Darbar, Dir Lower, Malakaand, KPK, Pakistan</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-indigo-400"></i>
+                            <span class="text-gray-400">+92 340 2699901</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-3 text-indigo-400"></i>
+                            <span class="text-gray-400">+92 311 9666996</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fab fa-whatsapp mr-3 text-indigo-400"></i>
+                            <span class="text-gray-400">+92 340 2699901</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-3 text-indigo-400"></i>
+                            <span class="text-gray-400">rehanroghani2@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center">
+                <p class="text-gray-400">&copy; 2023 Rehan's Store. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample product data
+        let products = [
+            {
+                id: 1,
+                name: "iPhone 14 Pro",
+                category: "phone",
+                price: 999.99,
+                description: "The latest iPhone with advanced camera system and powerful A16 Bionic chip.",
+                specs: ["A16 Bionic chip", "6.1-inch Super Retina XDR display", "48MP main camera", "128GB storage"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='180' height='360' x='60' y='20' rx='20' fill='%23333' /%3E%3Crect width='160' height='340' x='70' y='30' rx='15' fill='%23111' /%3E%3Ccircle cx='150' cy='350' r='10' fill='%23222' /%3E%3Crect width='60' height='15' x='120' y='40' rx='5' fill='%23222' /%3E%3Ccircle cx='100' cy='47' r='5' fill='%23222' /%3E%3Crect width='80' height='80' x='110' y='100' rx='10' fill='%23444' /%3E%3Crect width='80' height='80' x='110' y='190' rx='10' fill='%23444' /%3E%3C/svg%3E"
+            },
+            {
+                id: 2,
+                name: "Samsung Galaxy S23 Ultra",
+                category: "phone",
+                price: 1199.99,
+                description: "Premium Android smartphone with S Pen support and exceptional camera capabilities.",
+                specs: ["Snapdragon 8 Gen 2", "6.8-inch Dynamic AMOLED", "200MP main camera", "512GB storage"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='180' height='360' x='60' y='20' rx='15' fill='%23444' /%3E%3Crect width='160' height='340' x='70' y='30' rx='10' fill='%23222' /%3E%3Ccircle cx='150' cy='350' r='10' fill='%23333' /%3E%3Crect width='40' height='10' x='130' y='40' rx='3' fill='%23333' /%3E%3Ccircle cx='110' cy='40' r='4' fill='%23333' /%3E%3Crect width='100' height='100' x='100' y='80' rx='10' fill='%23555' /%3E%3Crect width='100' height='50' x='100' y='190' rx='5' fill='%23555' /%3E%3Crect width='100' height='50' x='100' y='250' rx='5' fill='%23555' /%3E%3C/svg%3E"
+            },
+            {
+                id: 3,
+                name: "MacBook Pro 16\"",
+                category: "laptop",
+                price: 2499.99,
+                description: "Powerful laptop for professionals with M2 Pro chip and stunning Liquid Retina XDR display.",
+                specs: ["M2 Pro chip", "16-inch Liquid Retina XDR display", "32GB unified memory", "1TB SSD storage"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='320' height='200' x='40' y='30' rx='10' fill='%23777' /%3E%3Crect width='300' height='180' x='50' y='40' rx='5' fill='%23333' /%3E%3Crect width='360' height='20' x='20' y='230' rx='5' fill='%23777' /%3E%3Crect width='100' height='10' x='150' y='235' rx='5' fill='%23555' /%3E%3Crect width='280' height='160' x='60' y='50' rx='2' fill='%23222' /%3E%3C/svg%3E"
+            },
+            {
+                id: 4,
+                name: "Dell XPS 15",
+                category: "laptop",
+                price: 1899.99,
+                description: "Premium Windows laptop with InfinityEdge display and powerful Intel processor.",
+                specs: ["Intel Core i9", "15.6-inch 4K UHD+ display", "32GB DDR5 RAM", "1TB NVMe SSD"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='320' height='200' x='40' y='30' rx='5' fill='%23555' /%3E%3Crect width='300' height='180' x='50' y='40' rx='3' fill='%23222' /%3E%3Crect width='360' height='20' x='20' y='230' rx='3' fill='%23555' /%3E%3Crect width='80' height='8' x='160' y='236' rx='2' fill='%23444' /%3E%3Crect width='280' height='160' x='60' y='50' rx='2' fill='%23111' /%3E%3C/svg%3E"
+            },
+            {
+                id: 5,
+                name: "Google Pixel 7 Pro",
+                category: "phone",
+                price: 899.99,
+                description: "Experience the best of Google with the Pixel 7 Pro featuring advanced AI capabilities.",
+                specs: ["Google Tensor G2", "6.7-inch LTPO OLED", "50MP triple camera system", "256GB storage"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='180' height='360' x='60' y='20' rx='20' fill='%23666' /%3E%3Crect width='160' height='340' x='70' y='30' rx='15' fill='%23333' /%3E%3Ccircle cx='150' cy='350' r='10' fill='%23555' /%3E%3Crect width='50' height='10' x='125' y='40' rx='3' fill='%23555' /%3E%3Crect width='120' height='30' x='90' y='70' rx='15' fill='%23777' /%3E%3Crect width='120' height='120' x='90' y='120' rx='10' fill='%23555' /%3E%3Crect width='120' height='60' x='90' y='260' rx='5' fill='%23555' /%3E%3C/svg%3E"
+            },
+            {
+                id: 6,
+                name: "ASUS ROG Zephyrus G14",
+                category: "laptop",
+                price: 1699.99,
+                description: "Compact gaming laptop with powerful AMD Ryzen processor and NVIDIA RTX graphics.",
+                specs: ["AMD Ryzen 9", "14-inch QHD 120Hz display", "16GB DDR5 RAM", "1TB NVMe SSD", "RTX 4070"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='320' height='200' x='40' y='30' rx='8' fill='%23333' /%3E%3Crect width='300' height='180' x='50' y='40' rx='5' fill='%23111' /%3E%3Crect width='360' height='25' x='20' y='230' rx='5' fill='%23333' /%3E%3Crect width='120' height='10' x='140' y='237' rx='3' fill='%23222' /%3E%3Crect width='280' height='160' x='60' y='50' rx='2' fill='%23000' /%3E%3Cpath d='M80 70 L100 70 L90 90 Z' fill='%23f00' /%3E%3C/svg%3E"
+            },
+            {
+                id: 7,
+                name: "Toyota Corolla 2022",
+                category: "other",
+                price: 25999.99,
+                description: "Reliable and fuel-efficient sedan with modern features and comfortable interior.",
+                specs: ["1.8L 4-cylinder engine", "Automatic transmission", "LED headlights", "Toyota Safety Sense", "8-inch touchscreen"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Cpath d='M50,140 C50,140 100,150 200,150 C300,150 350,140 350,140 L370,120 C370,120 320,100 200,100 C80,100 30,120 30,120 L50,140' fill='%234A90E2' /%3E%3Cellipse cx='100' cy='150' rx='20' ry='20' fill='%23333' /%3E%3Cellipse cx='300' cy='150' rx='20' ry='20' fill='%23333' /%3E%3Cpath d='M50,140 L70,90 L330,90 L350,140' fill='none' stroke='%234A90E2' stroke-width='45' /%3E%3Cpath d='M120,90 L150,50 L250,50 L280,90' fill='%234A90E2' /%3E%3Crect x='150' y='60' width='100' height='30' fill='%23ddd' /%3E%3C/svg%3E"
+            },
+            {
+                id: 8,
+                name: "Modern 3-Bedroom House",
+                category: "other",
+                price: 350000.00,
+                description: "Beautiful modern house with 3 bedrooms, 2 bathrooms, and a spacious garden in a prime location.",
+                specs: ["3 Bedrooms", "2 Bathrooms", "2-Car Garage", "1800 sq ft", "Large Garden", "Modern Kitchen"],
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Cpath d='M50,150 L200,50 L350,150' fill='none' stroke='%23333' stroke-width='10' /%3E%3Crect x='75' y='150' width='250' height='100' fill='%23D3B88C' /%3E%3Crect x='120' y='180' width='50' height='70' fill='%23603813' /%3E%3Crect x='230' y='170' width='40' height='40' fill='%2387CEEB' /%3E%3Crect x='280' y='170' width='40' height='40' fill='%2387CEEB' /%3E%3Crect x='75' y='150' width='250' height='10' fill='%23333' /%3E%3C/svg%3E"
+            }
+        ];
+        
+        let cart = [];
+        let nextProductId = 9;
+        let isAuthenticated = false;
+        
+        // Admin password - in a real app, this would be handled securely on a server
+        const adminPassword = "rehan123"; // Simple password for demo purposes
+        
+        // DOM Elements
+        const productsGrid = document.getElementById('productsGrid');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const adminBtn = document.getElementById('adminBtn');
+        const mobileAdminBtn = document.getElementById('mobileAdminBtn');
+        const adminPanel = document.getElementById('adminPanel');
+        const loginPanel = document.getElementById('loginPanel');
+        const closeAdminBtn = document.getElementById('closeAdminBtn');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const addProductForm = document.getElementById('addProductForm');
+        const productImage = document.getElementById('productImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const productsList = document.getElementById('productsList');
+        const notification = document.getElementById('notification');
+        const cartBtn = document.getElementById('cartBtn');
+        const cartPanel = document.getElementById('cartPanel');
+        const closeCart = document.getElementById('closeCart');
+        const cartOverlay = document.getElementById('cartOverlay');
+        const cartItems = document.getElementById('cartItems');
+        const cartCount = document.getElementById('cartCount');
+        const cartSubtotal = document.getElementById('cartSubtotal');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        // Initialize
+        displayProducts('all');
+        updateProductsList();
+        
+        // Event Listeners
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                categoryBtns.forEach(b => {
+                    b.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'shadow-md');
+                    b.classList.add('bg-white', 'text-gray-700');
+                });
+                btn.classList.remove('bg-white', 'text-gray-700');
+                btn.classList.add('active', 'bg-gradient-to-r', 'from-blue-600', 'to-indigo-600', 'text-white', 'shadow-md');
+                displayProducts(btn.dataset.category);
+            });
+        });
+        
+        adminBtn.addEventListener('click', () => {
+            if (isAuthenticated) {
+                adminPanel.style.display = 'flex';
+                updateProductsList();
+            } else {
+                loginPanel.style.display = 'flex';
+            }
+        });
+        
+        mobileAdminBtn.addEventListener('click', () => {
+            if (isAuthenticated) {
+                adminPanel.style.display = 'flex';
+                mobileMenu.classList.add('hidden');
+                updateProductsList();
+            } else {
+                loginPanel.style.display = 'flex';
+                mobileMenu.classList.add('hidden');
+            }
+        });
+        
+        closeAdminBtn.addEventListener('click', () => {
+            adminPanel.style.display = 'none';
+        });
+        
+        closeLoginBtn.addEventListener('click', () => {
+            loginPanel.style.display = 'none';
+            loginError.classList.add('hidden');
+        });
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === adminPassword) {
+                isAuthenticated = true;
+                loginPanel.style.display = 'none';
+                adminPanel.style.display = 'flex';
+                updateProductsList();
+                loginError.classList.add('hidden');
+                document.getElementById('adminPassword').value = '';
+                showNotification('Login successful! Welcome, Admin.', 'green');
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+        
+        productImage.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        addProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('productName').value;
+            const category = document.getElementById('productCategory').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const description = document.getElementById('productDescription').value;
+            const specs = document.getElementById('productSpecs').value.split(',').map(spec => spec.trim()).filter(spec => spec);
+            
+            let image;
+            
+            if (category === 'phone') {
+                image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='180' height='360' x='60' y='20' rx='20' fill='%23555' /%3E%3Crect width='160' height='340' x='70' y='30' rx='15' fill='%23222' /%3E%3Ccircle cx='150' cy='350' r='10' fill='%23444' /%3E%3C/svg%3E";
+            } else if (category === 'laptop') {
+                image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='320' height='200' x='40' y='30' rx='10' fill='%23777' /%3E%3Crect width='300' height='180' x='50' y='40' rx='5' fill='%23333' /%3E%3Crect width='360' height='20' x='20' y='230' rx='5' fill='%23777' /%3E%3Crect width='100' height='10' x='150' y='235' rx='5' fill='%23555' /%3E%3Crect width='280' height='160' x='60' y='50' rx='2' fill='%23222' /%3E%3C/svg%3E";
+            } else {
+                image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='300' height='200' x='50' y='50' rx='10' fill='%23f0f0f0' /%3E%3Ctext x='200' y='150' font-family='Arial' font-size='24' text-anchor='middle' fill='%23555'>Other Item</text%3E%3C/svg%3E";
+            }
+            
+            if (imagePreview.src && !imagePreview.classList.contains('hidden')) {
+                image = imagePreview.src;
+            }
+            
+            const newProduct = {
+                id: nextProductId++,
+                name,
+                category,
+                price,
+                description,
+                specs,
+                image
+            };
+            
+            products.push(newProduct);
+            displayProducts(document.querySelector('.category-btn.active').dataset.category);
+            updateProductsList();
+            
+            // Reset form
+            addProductForm.reset();
+            imagePreview.classList.add('hidden');
+            
+            showNotification('Product added successfully!', 'green');
+        });
+        
+        cartBtn.addEventListener('click', () => {
+            cartPanel.classList.add('open');
+            cartOverlay.classList.add('open');
+        });
+        
+        closeCart.addEventListener('click', () => {
+            cartPanel.classList.remove('open');
+            cartOverlay.classList.remove('open');
+        });
+        
+        cartOverlay.addEventListener('click', () => {
+            cartPanel.classList.remove('open');
+            cartOverlay.classList.remove('open');
+        });
+        
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!', 'red');
+                return;
+            }
+            
+            showNotification('Checkout successful! Thank you for your purchase.', 'green');
+            cart = [];
+            updateCart();
+            cartPanel.classList.remove('open');
+            cartOverlay.classList.remove('open');
+        });
+        
+        clearCartBtn.addEventListener('click', () => {
+            cart = [];
+            updateCart();
+            showNotification('Cart cleared!', 'blue');
+        });
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Contact form submission
+        document.querySelector('.contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            showNotification('Message sent successfully! We\'ll get back to you soon.', 'green');
+            e.target.reset();
+        });
+        
+        // Newsletter form submission
+        document.querySelector('.newsletter-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            showNotification('Thank you for subscribing to our newsletter!', 'green');
+            e.target.reset();
+        });
+        
+        // Functions
+        function displayProducts(category) {
+            productsGrid.innerHTML = '';
+            
+            const filteredProducts = category === 'all' 
+                ? products 
+                : products.filter(product => product.category === category);
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-box-open text-5xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 text-lg mb-2">No products found in this category.</p>
+                            <p class="text-gray-400">Check back later or browse other categories.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white rounded-xl overflow-hidden shadow-md transition-all relative';
+                
+                const specsHTML = product.specs.map(spec => `
+                    <li class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2 text-sm"></i>
+                        <span>${spec}</span>
+                    </li>
+                `).join('');
+                
+                let categoryLabel = 'Other';
+                let categoryClass = 'from-purple-100 to-pink-100 text-purple-800';
+                
+                if (product.category === 'phone') {
+                    categoryLabel = 'Phone';
+                    categoryClass = 'from-blue-100 to-indigo-100 text-blue-800';
+                } else if (product.category === 'laptop') {
+                    categoryLabel = 'Laptop';
+                    categoryClass = 'from-green-100 to-teal-100 text-green-800';
+                }
+                
+                productCard.innerHTML = `
+                    <span class="category-badge bg-gradient-to-r ${categoryClass}">${categoryLabel}</span>
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold mb-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${product.description}</p>
+                        <ul class="text-sm text-gray-700 mb-6 space-y-1">
+                            ${specsHTML}
+                        </ul>
+                        <div class="flex justify-between items-center">
+                            <div class="price-tag">$${product.price.toFixed(2)}</div>
+                            <button class="add-to-cart-btn bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition shadow-md flex items-center space-x-2" data-id="${product.id}">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productsGrid.appendChild(productCard);
+                
+                // Add event listener to the Add to Cart button
+                const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
+                addToCartBtn.addEventListener('click', () => {
+                    addToCart(product.id);
+                });
+            });
+        }
+        
+        function updateProductsList() {
+            productsList.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsList.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">No products available.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            products.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'flex items-center justify-between bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition';
+                
+                let categoryLabel = 'Other';
+                if (product.category === 'phone') categoryLabel = 'Phone';
+                else if (product.category === 'laptop') categoryLabel = 'Laptop';
+                
+                productItem.innerHTML = `
+                    <div class="flex items-center">
+                        <img src="${product.image}" alt="${product.name}" class="w-16 h-16 object-contain mr-4 bg-white p-1 rounded-lg">
+                        <div>
+                            <h4 class="font-semibold">${product.name}</h4>
+                            <p class="text-sm text-gray-600">$${product.price.toFixed(2)} - ${categoryLabel}</p>
+                        </div>
+                    </div>
+                    <button class="delete-product-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition" data-id="${product.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                
+                productsList.appendChild(productItem);
+                
+                // Add event listener to the delete button
+                const deleteBtn = productItem.querySelector('.delete-product-btn');
+                deleteBtn.addEventListener('click', () => {
+                    deleteProduct(product.id);
+                });
+            });
+        }
+        
+        function deleteProduct(id) {
+            products = products.filter(product => product.id !== id);
+            updateProductsList();
+            displayProducts(document.querySelector('.category-btn.active').dataset.category);
+            showNotification('Product deleted successfully!', 'blue');
+        }
+        
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showNotification(`${product.name} added to cart!`, 'green');
+        }
+        
+        function updateCart() {
+            cartItems.innerHTML = '';
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500 mb-2">Your cart is empty</p>
+                            <p class="text-gray-400 text-sm">Add some products to your cart</p>
+                        </div>
+                    </div>
+                `;
+                cartSubtotal.textContent = '$0.00';
+                return;
+            }
+            
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center justify-between border-b border-gray-200 pb-4';
+                
+                cartItem.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mr-4 p-2">
+                            <img src="${item.image}" alt="${item.name}" class="max-h-full max-w-full object-contain">
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">${item.name}</h4>
+                            <p class="text-sm text-gray-600">$${item.price.toFixed(2)} x ${item.quantity}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <button class="cart-item-decrease text-gray-500 hover:text-gray-700 hover:bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center" data-id="${item.id}">
+                            <i class="fas fa-minus text-sm"></i>
+                        </button>
+                        <span class="mx-3 w-6 text-center">${item.quantity}</span>
+                        <button class="cart-item-increase text-gray-500 hover:text-gray-700 hover:bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center" data-id="${item.id}">
+                            <i class="fas fa-plus text-sm"></i>
+                        </button>
+                        <button class="cart-item-remove text-red-500 hover:text-red-700 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center ml-3" data-id="${item.id}">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+                
+                // Add event listeners
+                const decreaseBtn = cartItem.querySelector('.cart-item-decrease');
+                const increaseBtn = cartItem.querySelector('.cart-item-increase');
+                const removeBtn = cartItem.querySelector('.cart-item-remove');
+                
+                decreaseBtn.addEventListener('click', () => {
+                    decreaseQuantity(item.id);
+                });
+                
+                increaseBtn.addEventListener('click', () => {
+                    increaseQuantity(item.id);
+                });
+                
+                removeBtn.addEventListener('click', () => {
+                    removeFromCart(item.id);
+                });
+            });
+            
+            cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+        }
+        
+        function decreaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity -= 1;
+                if (item.quantity <= 0) {
+                    removeFromCart(id);
+                } else {
+                    updateCart();
+                }
+            }
+        }
+        
+        function increaseQuantity(id) {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.quantity += 1;
+                updateCart();
+            }
+        }
+        
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCart();
+        }
+        
+        function showNotification(message, color) {
+            notification.textContent = message;
+            notification.className = `notification bg-${color}-500`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96297c2bd0db8e3a',t:'MTc1MzA4ODE4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
